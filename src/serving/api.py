@@ -20,6 +20,11 @@ class PredictionRequest(BaseModel):
 @app.on_event("startup")
 def load_model() -> None:
     global model, model_error
+    if DEMO_MODE:
+        model = None
+        model_error = "Demo mode enabled. MLflow model loading skipped."
+        return
+
     try:
         import mlflow.pyfunc
 
@@ -28,6 +33,18 @@ def load_model() -> None:
     except Exception as exc:
         model = None
         model_error = str(exc)
+
+
+@app.get("/")
+def root() -> dict:
+    return {
+        "name": "Retail AI System",
+        "status": "live",
+        "docs": "/docs",
+        "health": "/health",
+        "predict": "/predict",
+        "demo_mode": DEMO_MODE,
+    }
 
 
 @app.get("/health")
