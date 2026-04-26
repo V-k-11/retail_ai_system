@@ -1,0 +1,7 @@
+steps:
+  - ingestion
+  - processing
+  - feature_engineering
+  - training
+  - evaluation
+

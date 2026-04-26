@@ -1,0 +1,9 @@
+training:
+  test_size: 0.2
+  random_state: 42
+  experiment_name: retail-ai-instacart
+  registered_model_name: retail_model
+  max_rows: 100000
+  target_metric: accuracy
+  min_metric_threshold: 0.75
+

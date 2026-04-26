@@ -1,0 +1,16 @@
+features:
+  label_column: reordered
+  output_format: parquet
+  numeric_columns:
+    - order_number
+    - order_dow
+    - order_hour_of_day
+    - days_since_prior_order
+    - add_to_cart_order
+    - user_order_count
+    - product_order_count
+    - product_reorder_rate
+  categorical_columns:
+    - aisle_id
+    - department_id
+
