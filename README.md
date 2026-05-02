@@ -43,6 +43,17 @@ Download the Instacart CSV files and place them in `data/raw/`:
 python main.py
 ```
 
+Run the small GitHub-friendly demo dataset:
+
+```powershell
+$env:RETAIL_RAW_DIR="data/sample/raw"
+$env:RETAIL_TRAINING_CONFIG="config/training_demo.yaml"
+python main.py
+```
+
+The full Instacart CSVs should stay local in `data/raw/archive/`. The committed sample
+data in `data/sample/raw/` is only for demos, smoke tests, and CI-friendly examples.
+
 Run only when drift is detected:
 
 ```bash
@@ -72,4 +83,3 @@ curl -X POST http://127.0.0.1:8000/predict ^
 ```bash
 pytest
 ```
-

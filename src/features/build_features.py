@@ -1,13 +1,19 @@
-from pyspark.sql import functions as F
+import pandas as pd
 
-from src.utils.helpers import get_spark, load_yaml, project_path
+from src.utils.helpers import get_spark, load_yaml, project_path, use_pandas_engine
 
 
 def run() -> None:
     """Build model features from the processed Instacart table."""
-    spark = get_spark("retail-ai-features")
     config = load_yaml(project_path("config/features.yaml"))["features"]
 
+    if use_pandas_engine():
+        _run_pandas(config)
+        return
+
+    from pyspark.sql import functions as F
+
+    spark = get_spark("retail-ai-features")
     input_path = project_path("data/processed/instacart_joined")
     if not input_path.exists():
         raise FileNotFoundError(f"Missing processed dataset: {input_path}")
@@ -42,3 +48,43 @@ def run() -> None:
     features.select(*selected_columns).write.mode("overwrite").parquet(str(output_path))
     print(f"Wrote feature table -> {output_path}")
 
+
+def _run_pandas(config: dict) -> None:
+    input_path = project_path("data/processed/instacart_joined.parquet")
+    if not input_path.exists():
+        raise FileNotFoundError(f"Missing processed dataset: {input_path}")
+
+    df = pd.read_parquet(input_path)
+
+    user_features = (
+        df.groupby("user_id", as_index=False)
+        .agg(
+            user_order_count=("order_id", "nunique"),
+            user_avg_days_between_orders=("days_since_prior_order", "mean"),
+        )
+    )
+    product_features = (
+        df.groupby("product_id", as_index=False)
+        .agg(
+            product_order_count=("order_id", "count"),
+            product_reorder_rate=("reordered", "mean"),
+        )
+    )
+
+    features = (
+        df.merge(user_features, on="user_id", how="left")
+        .merge(product_features, on="product_id", how="left")
+        .fillna(0)
+    )
+
+    selected_columns = (
+        ["user_id", "product_id"]
+        + config["numeric_columns"]
+        + config["categorical_columns"]
+        + [config["label_column"]]
+    )
+    selected_columns = [column for column in selected_columns if column in features.columns]
+
+    output_path = project_path("data/features/instacart_features.parquet")
+    features[selected_columns].to_parquet(output_path, index=False)
+    print(f"Wrote feature table -> {output_path}")

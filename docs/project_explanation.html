@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Retail AI Reorder Prediction System</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.5; color: #17202a; margin: 42px; }
+    h1 { font-size: 30px; margin-bottom: 8px; }
+    h2 { font-size: 20px; border-bottom: 1px solid #d8dee6; padding-bottom: 4px; margin-top: 28px; }
+    h3 { font-size: 16px; margin-top: 20px; }
+    code, pre { font-family: Consolas, monospace; }
+    pre { background: #f4f6f8; border: 1px solid #d8dee6; padding: 12px; overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+    th, td { border: 1px solid #d8dee6; padding: 8px; text-align: left; }
+    th { background: #eef2f6; }
+    @media print { body { margin: 22mm; } }
+  </style>
+</head>
+<body>
+  <h1>Retail AI Reorder Prediction System</h1>
+  <p>This project is an end-to-end machine learning engineering system for retail reorder prediction using an Instacart-style dataset. It predicts whether a customer is likely to reorder a product based on order history, product behavior, and cart-level signals.</p>
+
+  <h2>Business Problem</h2>
+  <p>Retail and grocery platforms need to understand which products a customer is likely to buy again. This supports personalized recommendations, buy-again sections, targeted promotions, inventory planning, and customer retention.</p>
+  <p><strong>Core question:</strong> Will this customer reorder this product?</p>
+  <p><strong>Output:</strong> 1 = likely reordered, 0 = not likely reordered.</p>
+
+  <h2>End-to-End Workflow</h2>
+  <pre>Raw Instacart data
+        ↓
+Ingestion pipeline
+        ↓
+Processed data tables
+        ↓
+Feature engineering
+        ↓
+Training dataset
+        ↓
+ML model training
+        ↓
+MLflow tracking
+        ↓
+Model serving API
+        ↓
+Prediction + GenAI explanation
+        ↓
+Monitoring and retraining trigger</pre>
+
+  <h2>Tools, Frameworks, And Why They Are Used</h2>
+  <h3>Python</h3>
+  <p>Main programming language for data engineering, machine learning, APIs, and GenAI integrations.</p>
+
+  <h3>PySpark</h3>
+  <p>Used for scalable data processing: reading large CSV files, converting raw data to Parquet, joining large tables, and aggregating features. PySpark requires Java because Spark executes on the JVM.</p>
+
+  <h3>Pandas</h3>
+  <p>Used as a lightweight demo engine for small local data. It allows the demo pipeline to run without Java or Spark setup.</p>
+
+  <h3>Parquet</h3>
+  <p>Used for processed and feature data because it is columnar, compressed, and common in data lake and ML pipelines.</p>
+
+  <h3>Scikit-Learn</h3>
+  <p>Used to train the baseline Random Forest classifier for tabular reorder prediction.</p>
+
+  <h3>MLflow</h3>
+  <p>Used for experiment tracking, metric logging, parameter logging, and model lifecycle structure.</p>
+
+  <h3>FastAPI</h3>
+  <p>Used to serve predictions through HTTP endpoints. It provides <code>/predict</code>, <code>/assistant</code>, <code>/health</code>, <code>/docs</code>, and <code>/demo</code>.</p>
+
+  <h3>Joblib</h3>
+  <p>Used to save and load the local trained model at <code>data/predictions/retail_model.joblib</code>.</p>
+
+  <h3>Grok / xAI API</h3>
+  <p>Used by the assistant endpoint when an API key is provided. It explains predictions in business-friendly language.</p>
+
+  <h3>GitHub Actions</h3>
+  <p>Used for CI/CD validation by running tests on push and pull request.</p>
+
+  <h3>Render</h3>
+  <p>Used to host the lightweight FastAPI serving demo.</p>
+
+  <h2>Feature Engineering</h2>
+  <p>The system creates features such as order number, order day of week, order hour, days since prior order, add-to-cart order, user order count, product order count, product reorder rate, aisle ID, and department ID.</p>
+  <p>These features represent customer behavior, product popularity, timing, and category information.</p>
+
+  <h2>Model Training</h2>
+  <p>The project currently trains one model type: Random Forest. Training includes train-test split, preprocessing, model fitting, accuracy calculation, ROC-AUC calculation, MLflow logging, and prediction export.</p>
+  <pre>{
+  "accuracy": 0.8,
+  "roc_auc": 0.75
+}</pre>
+
+  <h2>Model Serving</h2>
+  <p>The trained model is served with FastAPI. A request contains customer and product behavior features. The response tells whether the product is likely to be reordered.</p>
+  <pre>{
+  "records": [
+    {
+      "order_number": 10,
+      "order_dow": 1,
+      "order_hour_of_day": 5,
+      "days_since_prior_order": 7,
+      "add_to_cart_order": 1,
+      "user_order_count": 5,
+      "product_order_count": 100,
+      "product_reorder_rate": 0.6,
+      "aisle_id": 24,
+      "department_id": 4
+    }
+  ]
+}</pre>
+  <pre>{
+  "prediction": 1,
+  "label": "likely_reordered",
+  "mode": "local_joblib"
+}</pre>
+
+  <h2>GenAI Assistant</h2>
+  <p>The GenAI assistant is an explanation layer. The ML model predicts reorder behavior, and the assistant explains the result in business language. This is useful because business users need interpretable recommendations, not only numeric predictions.</p>
+
+  <h2>Monitoring And Self-Improving Loop</h2>
+  <p>The monitoring module checks if model accuracy falls below a configured threshold. If performance drops, the pipeline can trigger retraining. This is a simple version of production model monitoring.</p>
+
+  <h2>Local Demo Commands</h2>
+  <pre>$env:RETAIL_ENGINE="pandas"
+$env:RETAIL_RAW_DIR="data/sample/raw"
+$env:RETAIL_TRAINING_CONFIG="config/training_demo.yaml"
+python main.py</pre>
+  <pre>$env:USE_MLFLOW_MODEL="false"
+$env:DEMO_MODE="false"
+$env:LOCAL_MODEL_PATH="data/predictions/retail_model.joblib"
+python -m uvicorn src.serving.api:app --host 127.0.0.1 --port 8002</pre>
+  <p>Open <code>http://127.0.0.1:8002/demo</code>.</p>
+
+  <h2>Production Mapping</h2>
+  <table>
+    <tr><th>Project Component</th><th>Production Equivalent</th></tr>
+    <tr><td>data/raw</td><td>Data lake storage such as S3, ADLS, or GCS</td></tr>
+    <tr><td>PySpark pipeline</td><td>Distributed ETL or Databricks job</td></tr>
+    <tr><td>Parquet feature table</td><td>Offline feature store</td></tr>
+    <tr><td>MLflow tracking</td><td>Experiment tracking and model registry</td></tr>
+    <tr><td>FastAPI</td><td>Real-time model serving API</td></tr>
+    <tr><td>GenAI assistant</td><td>LLM-based business explanation layer</td></tr>
+    <tr><td>Drift check</td><td>Monitoring and retraining trigger</td></tr>
+    <tr><td>GitHub Actions</td><td>CI/CD validation</td></tr>
+    <tr><td>Render</td><td>Lightweight API hosting</td></tr>
+  </table>
+
+  <h2>Why This Project Is Relevant</h2>
+  <p>This project demonstrates data and feature pipelines, model training and evaluation, experiment tracking, API serving, GenAI explanation, CI/CD validation, and a scalable design that can move from local demo to production platforms like Databricks.</p>
+</body>
+</html>
+

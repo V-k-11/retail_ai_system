@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import yaml
@@ -26,6 +27,10 @@ def ensure_dirs() -> None:
         "mlruns",
     ]:
         project_path(relative).mkdir(parents=True, exist_ok=True)
+
+
+def use_pandas_engine() -> bool:
+    return os.getenv("RETAIL_ENGINE", "").lower() == "pandas"
 
 
 def get_spark(app_name: str) -> SparkSession:

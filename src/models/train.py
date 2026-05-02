@@ -1,9 +1,12 @@
 import json
+import os
+import tempfile
 from pathlib import Path
 
 import mlflow
 import mlflow.sklearn
 import pandas as pd
+import joblib
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
@@ -12,7 +15,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 
-from src.utils.helpers import get_spark, load_yaml, project_path
+from src.utils.helpers import get_spark, load_yaml, project_path, use_pandas_engine
 
 
 def _build_model(model_config: dict) -> RandomForestClassifier:
@@ -24,16 +27,29 @@ def _build_model(model_config: dict) -> RandomForestClassifier:
 
 
 def run() -> None:
-    training_config = load_yaml(project_path("config/training.yaml"))["training"]
+    tmp_dir = project_path("tmp")
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+    os.environ.setdefault("TMP", str(tmp_dir))
+    os.environ.setdefault("TEMP", str(tmp_dir))
+    tempfile.tempdir = str(tmp_dir)
+
+    training_config = load_yaml(
+        project_path(os.getenv("RETAIL_TRAINING_CONFIG", "config/training.yaml"))
+    )["training"]
     feature_config = load_yaml(project_path("config/features.yaml"))["features"]
     model_config = load_yaml(project_path("config/model.yaml"))
 
-    spark = get_spark("retail-ai-training")
-    feature_path = project_path("data/features/instacart_features")
-    if not feature_path.exists():
-        raise FileNotFoundError(f"Missing feature dataset: {feature_path}")
-
-    df = spark.read.parquet(str(feature_path)).limit(training_config["max_rows"]).toPandas()
+    if use_pandas_engine():
+        feature_path = project_path("data/features/instacart_features.parquet")
+        if not feature_path.exists():
+            raise FileNotFoundError(f"Missing feature dataset: {feature_path}")
+        df = pd.read_parquet(feature_path).head(training_config["max_rows"])
+    else:
+        spark = get_spark("retail-ai-training")
+        feature_path = project_path("data/features/instacart_features")
+        if not feature_path.exists():
+            raise FileNotFoundError(f"Missing feature dataset: {feature_path}")
+        df = spark.read.parquet(str(feature_path)).limit(training_config["max_rows"]).toPandas()
     label_column = feature_config["label_column"]
     if label_column not in df.columns:
         raise ValueError(f"Label column not found in features: {label_column}")
@@ -78,6 +94,8 @@ def run() -> None:
         stratify=y if y.nunique() > 1 else None,
     )
 
+    if not os.getenv("MLFLOW_TRACKING_URI"):
+        mlflow.set_tracking_uri(project_path("mlruns").as_uri())
     mlflow.set_experiment(training_config["experiment_name"])
     with mlflow.start_run() as run_context:
         pipeline.fit(X_train, y_train)
@@ -90,18 +108,26 @@ def run() -> None:
 
         mlflow.log_params(model_config["model"].get("params", {}))
         mlflow.log_metrics(metrics)
-        mlflow.sklearn.log_model(
-            pipeline,
-            artifact_path="model",
-            registered_model_name=training_config["registered_model_name"],
-        )
 
         artifact_dir = project_path("data/predictions")
         artifact_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            mlflow.sklearn.log_model(
+                pipeline,
+                artifact_path="model",
+                registered_model_name=training_config["registered_model_name"],
+            )
+        except PermissionError as exc:
+            local_model_path = artifact_dir / "retail_model.joblib"
+            joblib.dump(pipeline, local_model_path)
+            print(
+                "MLflow model artifact logging was skipped because the environment "
+                f"blocked temp-file writes: {exc}. Saved local model -> {local_model_path}"
+            )
+
         pd.DataFrame({"prediction": predictions, "actual": y_test.to_numpy()}).to_csv(
             artifact_dir / "validation_predictions.csv", index=False
         )
         Path(artifact_dir / "latest_metrics.json").write_text(json.dumps(metrics, indent=2))
 
         print(f"Training complete. MLflow run_id={run_context.info.run_id}, metrics={metrics}")
-

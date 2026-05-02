@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 
 from src.monitoring.drift import check_drift
 from src.pipelines.pipeline_runner import run_pipeline
@@ -27,7 +28,9 @@ def main() -> None:
         return
 
     metrics = json.loads(metrics_path.read_text())
-    training_config = load_yaml(project_path("config/training.yaml"))["training"]
+    training_config = load_yaml(
+        project_path(os.getenv("RETAIL_TRAINING_CONFIG", "config/training.yaml"))
+    )["training"]
     if check_drift(
         metrics,
         metric_name=training_config["target_metric"],
@@ -41,4 +44,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

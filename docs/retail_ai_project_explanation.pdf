@@ -1,0 +1,871 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R 9 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R] /Count 8 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Length 1590 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+(RETAIL AI REORDER PREDICTION SYSTEM) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(1. Project Overview) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(This project is an end-to-end machine learning engineering system for retail reorder prediction) Tj
+T*
+(using an Instacart-style dataset. It predicts whether a customer is likely to reorder a product) Tj
+T*
+(based on order history, product behavior, and cart-level signals.) Tj
+T*
+() Tj
+T*
+(The project is designed to demonstrate more than model training. It shows how a production-style) Tj
+T*
+(ML system is structured: data ingestion, feature engineering, training, experiment tracking,) Tj
+T*
+(model serving, monitoring, CI/CD, and a GenAI assistant layer.) Tj
+T*
+() Tj
+T*
+(2. Business Problem) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Retail and grocery platforms need to understand which products a customer is likely to buy) Tj
+T*
+(again. This helps with:) Tj
+T*
+() Tj
+T*
+(- personalized recommendations) Tj
+T*
+(- buy-again sections) Tj
+T*
+(- targeted promotions) Tj
+T*
+(- inventory planning) Tj
+T*
+(- customer retention) Tj
+T*
+() Tj
+T*
+(The core prediction question is:) Tj
+T*
+() Tj
+T*
+(Will this customer reorder this product?) Tj
+T*
+() Tj
+T*
+(The model output is:) Tj
+T*
+() Tj
+T*
+(- 1: likely reordered) Tj
+T*
+(- 0: not likely reordered) Tj
+T*
+() Tj
+T*
+(3. End-to-End Workflow) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(The system follows this workflow:) Tj
+T*
+() Tj
+T*
+(  Raw Instacart data) Tj
+T*
+(          ->) Tj
+T*
+(  Ingestion pipeline) Tj
+T*
+(          ->) Tj
+T*
+(  Processed data tables) Tj
+T*
+(          ->) Tj
+T*
+(  Feature engineering) Tj
+T*
+(          ->) Tj
+T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 1898 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+(  Training dataset) Tj
+T*
+(          ->) Tj
+T*
+(  ML model training) Tj
+T*
+(          ->) Tj
+T*
+(  MLflow tracking) Tj
+T*
+(          ->) Tj
+T*
+(  Model serving API) Tj
+T*
+(          ->) Tj
+T*
+(  Prediction + GenAI explanation) Tj
+T*
+(          ->) Tj
+T*
+(  Monitoring and retraining trigger) Tj
+T*
+() Tj
+T*
+(4. Project Structure) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(  config/                  Declarative YAML configs) Tj
+T*
+(  data/raw/                Full local Instacart data) Tj
+T*
+(  data/sample/raw/         Small demo dataset) Tj
+T*
+(  data/processed/          Processed tables) Tj
+T*
+(  data/features/           Feature tables) Tj
+T*
+(  data/predictions/        Metrics, predictions, saved model) Tj
+T*
+(  src/ingestion/           Data ingestion logic) Tj
+T*
+(  src/processing/          Data joining and transformation) Tj
+T*
+(  src/features/            Feature engineering) Tj
+T*
+(  src/models/              Training, evaluation, prediction) Tj
+T*
+(  src/pipelines/           Declarative pipeline runner) Tj
+T*
+(  src/serving/             FastAPI serving layer) Tj
+T*
+(  src/rag/                 RAG/GenAI assistant foundation) Tj
+T*
+(  src/monitoring/          Drift and retraining checks) Tj
+T*
+(  tests/                   Unit tests) Tj
+T*
+(  .github/workflows/      GitHub Actions CI) Tj
+T*
+() Tj
+T*
+(5. Tools And Frameworks) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Python) Tj
+T*
+() Tj
+T*
+(Python is used as the main programming language because it has strong support for data) Tj
+T*
+(engineering, machine learning, APIs, and GenAI integrations.) Tj
+T*
+() Tj
+T*
+(PySpark) Tj
+T*
+() Tj
+T*
+(PySpark is used for the scalable data-processing path. It is suitable for large datasets because) Tj
+T*
+(it can distribute reads, joins, aggregations, and writes across a Spark cluster.) Tj
+T*
+() Tj
+T*
+(In this project, PySpark is used for:) Tj
+T*
+() Tj
+T*
+(- reading large CSV files) Tj
+T*
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 1794 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+(- converting raw data to Parquet) Tj
+T*
+(- joining orders, products, and order-product data) Tj
+T*
+(- aggregating product and user features) Tj
+T*
+() Tj
+T*
+(PySpark requires Java because the Spark execution engine runs on the JVM. Python controls Spark,) Tj
+T*
+(but Spark itself executes through the JVM.) Tj
+T*
+() Tj
+T*
+(Pandas) Tj
+T*
+() Tj
+T*
+(Pandas is used as a lightweight demo engine for small local data. This allows the project to run) Tj
+T*
+(without Java or Spark setup during demos.) Tj
+T*
+() Tj
+T*
+(The demo mode is activated with:) Tj
+T*
+() Tj
+T*
+(  $env:RETAIL_ENGINE="pandas") Tj
+T*
+() Tj
+T*
+(This is useful for fast local demonstrations and CI-friendly testing.) Tj
+T*
+() Tj
+T*
+(Parquet) Tj
+T*
+() Tj
+T*
+(Parquet is used to store processed and feature data. It is columnar, compressed, and commonly) Tj
+T*
+(used in data lakes and ML pipelines.) Tj
+T*
+() Tj
+T*
+(In production, this could be upgraded to Delta Lake for ACID transactions, schema enforcement,) Tj
+T*
+(and time travel.) Tj
+T*
+() Tj
+T*
+(Scikit-Learn) Tj
+T*
+() Tj
+T*
+(Scikit-learn is used for the baseline ML model. The current model is a Random Forest classifier.) Tj
+T*
+() Tj
+T*
+(Random Forest is used because it works well as a strong baseline for tabular data and can) Tj
+T*
+(capture non-linear relationships between customer behavior and reorder probability.) Tj
+T*
+() Tj
+T*
+(MLflow) Tj
+T*
+() Tj
+T*
+(MLflow is used for model lifecycle management.) Tj
+T*
+() Tj
+T*
+(In this project, MLflow handles:) Tj
+T*
+() Tj
+T*
+(- experiment tracking) Tj
+T*
+(- parameter logging) Tj
+T*
+(- metric logging) Tj
+T*
+(- model artifact logging where supported) Tj
+T*
+(- model lifecycle structure) Tj
+T*
+() Tj
+T*
+(The project currently trains one model type: Random Forest.) Tj
+T*
+() Tj
+T*
+(FastAPI) Tj
+T*
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 1616 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+() Tj
+T*
+(FastAPI is used to expose the trained model through an API.) Tj
+T*
+() Tj
+T*
+(Endpoints include:) Tj
+T*
+() Tj
+T*
+(- /health: service health check) Tj
+T*
+(- /predict: reorder prediction) Tj
+T*
+(- /assistant: GenAI explanation) Tj
+T*
+(- /demo: simple browser-based demo UI) Tj
+T*
+(- /docs: Swagger API documentation) Tj
+T*
+() Tj
+T*
+(FastAPI is used because it is fast, modern, easy to document, and production-friendly.) Tj
+T*
+() Tj
+T*
+(Joblib) Tj
+T*
+() Tj
+T*
+(Joblib is used to save and load the locally trained model as:) Tj
+T*
+() Tj
+T*
+(  data/predictions/retail_model.joblib) Tj
+T*
+() Tj
+T*
+(This allows the FastAPI app to serve the sample-trained model locally without requiring the) Tj
+T*
+(MLflow model registry.) Tj
+T*
+() Tj
+T*
+(Grok / xAI API) Tj
+T*
+() Tj
+T*
+(The GenAI assistant can call Grok using the xAI API when an API key is provided.) Tj
+T*
+() Tj
+T*
+(The assistant is used for:) Tj
+T*
+() Tj
+T*
+(- explaining predictions in business language) Tj
+T*
+(- summarizing why a product may be reordered) Tj
+T*
+(- making the output easier for business users to understand) Tj
+T*
+() Tj
+T*
+(Environment variables:) Tj
+T*
+() Tj
+T*
+(  $env:XAI_API_KEY="your_key") Tj
+T*
+(  $env:XAI_MODEL="grok-4") Tj
+T*
+() Tj
+T*
+(If no key is provided, the assistant uses a local fallback explanation.) Tj
+T*
+() Tj
+T*
+(GitHub Actions) Tj
+T*
+() Tj
+T*
+(GitHub Actions is used for CI/CD validation.) Tj
+T*
+() Tj
+T*
+(It runs tests on push and pull request to ensure the codebase remains healthy.) Tj
+T*
+() Tj
+T*
+(Render) Tj
+T*
+() Tj
+T*
+(Render is used to host the lightweight FastAPI demo.) Tj
+T*
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 1392 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+() Tj
+T*
+(The Render deployment uses demo mode because the full Instacart dataset and trained local model) Tj
+T*
+(artifacts are not pushed to GitHub.) Tj
+T*
+() Tj
+T*
+(6. Feature Engineering) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(The feature engineering layer creates features such as:) Tj
+T*
+() Tj
+T*
+(- order_number) Tj
+T*
+(- order_dow) Tj
+T*
+(- order_hour_of_day) Tj
+T*
+(- days_since_prior_order) Tj
+T*
+(- add_to_cart_order) Tj
+T*
+(- user_order_count) Tj
+T*
+(- product_order_count) Tj
+T*
+(- product_reorder_rate) Tj
+T*
+(- aisle_id) Tj
+T*
+(- department_id) Tj
+T*
+() Tj
+T*
+(These features represent customer behavior, product popularity, order timing, and product) Tj
+T*
+(category.) Tj
+T*
+() Tj
+T*
+(Example interpretation:) Tj
+T*
+() Tj
+T*
+(  product_reorder_rate = 0.6) Tj
+T*
+() Tj
+T*
+(means the product is reordered 60 percent of the time in historical data.) Tj
+T*
+() Tj
+T*
+(7. Model Training) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(The model training step reads the feature table and trains a Random Forest classifier.) Tj
+T*
+() Tj
+T*
+(Training includes:) Tj
+T*
+() Tj
+T*
+(- train-test split) Tj
+T*
+(- numeric feature imputation) Tj
+T*
+(- categorical feature encoding) Tj
+T*
+(- model training) Tj
+T*
+(- accuracy calculation) Tj
+T*
+(- ROC-AUC calculation) Tj
+T*
+(- MLflow metric logging) Tj
+T*
+(- validation prediction export) Tj
+T*
+() Tj
+T*
+(Example output:) Tj
+T*
+() Tj
+T*
+(  {) Tj
+T*
+ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 1265 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+(    "accuracy": 0.8,) Tj
+T*
+(    "roc_auc": 0.75) Tj
+T*
+(  }) Tj
+T*
+() Tj
+T*
+(8. Model Serving) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(The trained model is served with FastAPI.) Tj
+T*
+() Tj
+T*
+(Sample request:) Tj
+T*
+() Tj
+T*
+(  {) Tj
+T*
+(    "records": [) Tj
+T*
+(      {) Tj
+T*
+(        "order_number": 10,) Tj
+T*
+(        "order_dow": 1,) Tj
+T*
+(        "order_hour_of_day": 5,) Tj
+T*
+(        "days_since_prior_order": 7,) Tj
+T*
+(        "add_to_cart_order": 1,) Tj
+T*
+(        "user_order_count": 5,) Tj
+T*
+(        "product_order_count": 100,) Tj
+T*
+(        "product_reorder_rate": 0.6,) Tj
+T*
+(        "aisle_id": 24,) Tj
+T*
+(        "department_id": 4) Tj
+T*
+(      }) Tj
+T*
+(    ]) Tj
+T*
+(  }) Tj
+T*
+() Tj
+T*
+(Sample response:) Tj
+T*
+() Tj
+T*
+(  {) Tj
+T*
+(    "predictions": [) Tj
+T*
+(      {) Tj
+T*
+(        "prediction": 1,) Tj
+T*
+(        "label": "likely_reordered",) Tj
+T*
+(        "confidence_hint": "model_score",) Tj
+T*
+(        "reason": "Generated by the ML model.") Tj
+T*
+(      }) Tj
+T*
+(    ],) Tj
+T*
+(    "mode": "local_joblib") Tj
+T*
+(  }) Tj
+T*
+() Tj
+T*
+(9. GenAI Assistant) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(The GenAI assistant is not the prediction model. It is an explanation layer around the ML) Tj
+T*
+(system.) Tj
+T*
+() Tj
+T*
+ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 1547 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+(The ML model predicts:) Tj
+T*
+() Tj
+T*
+(  likely reordered or not likely reordered) Tj
+T*
+() Tj
+T*
+(The GenAI assistant explains:) Tj
+T*
+() Tj
+T*
+(  why the prediction matters in business language) Tj
+T*
+() Tj
+T*
+(This is relevant in production because business users often need explanations, not just raw) Tj
+T*
+(model outputs.) Tj
+T*
+() Tj
+T*
+(10. Monitoring And Self-Improving Loop) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(The monitoring module checks whether the model metric falls below a threshold.) Tj
+T*
+() Tj
+T*
+(Example:) Tj
+T*
+() Tj
+T*
+(  if accuracy < 0.75:) Tj
+T*
+(      retrain pipeline) Tj
+T*
+() Tj
+T*
+(This is a simple version of a self-healing ML pipeline. In production, this can be expanded with) Tj
+T*
+(feature drift, data quality checks, model performance monitoring, and scheduled retraining.) Tj
+T*
+() Tj
+T*
+(11. Local Demo Commands) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Train with the small demo dataset:) Tj
+T*
+() Tj
+T*
+(  $env:RETAIL_ENGINE="pandas") Tj
+T*
+(  $env:RETAIL_RAW_DIR="data/sample/raw") Tj
+T*
+(  $env:RETAIL_TRAINING_CONFIG="config/training_demo.yaml") Tj
+T*
+(  python main.py) Tj
+T*
+() Tj
+T*
+(Start FastAPI with the locally trained model:) Tj
+T*
+() Tj
+T*
+(  $env:USE_MLFLOW_MODEL="false") Tj
+T*
+(  $env:DEMO_MODE="false") Tj
+T*
+(  $env:LOCAL_MODEL_PATH="data/predictions/retail_model.joblib") Tj
+T*
+(  python -m uvicorn src.serving.api:app --host 127.0.0.1 --port 8002) Tj
+T*
+() Tj
+T*
+(Open:) Tj
+T*
+() Tj
+T*
+(  http://127.0.0.1:8002/demo) Tj
+T*
+() Tj
+T*
+(12. Production Mapping) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 16 0 R >>
+endobj
+18 0 obj
+<< /Length 1246 >>
+stream
+BT
+/F1 10 Tf
+50 790 Td
+14 TL
+(This project maps to production systems as follows:) Tj
+T*
+() Tj
+T*
+(  Project Component   Production Equivalent) Tj
+T*
+( --- ---) Tj
+T*
+(  data/raw   Data lake storage such as S3, ADLS, or GCS) Tj
+T*
+(  PySpark pipeline   Distributed ETL or Databricks job) Tj
+T*
+(  Parquet feature table   Offline feature store) Tj
+T*
+(  MLflow tracking   Experiment tracking and model registry) Tj
+T*
+(  FastAPI   Real-time model serving API) Tj
+T*
+(  GenAI assistant   LLM-based business explanation layer) Tj
+T*
+(  Drift check   Monitoring and retraining trigger) Tj
+T*
+(  GitHub Actions   CI/CD validation) Tj
+T*
+(  Render   Lightweight API hosting) Tj
+T*
+() Tj
+T*
+(13. Why This Project Is Relevant) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(This project demonstrates the responsibilities of a machine learning engineer:) Tj
+T*
+() Tj
+T*
+(- building data and feature pipelines) Tj
+T*
+(- training and evaluating models) Tj
+T*
+(- tracking experiments) Tj
+T*
+(- serving predictions through APIs) Tj
+T*
+(- adding GenAI explanations) Tj
+T*
+(- validating code with CI/CD) Tj
+T*
+(- designing for both local demo and scalable production paths) Tj
+T*
+() Tj
+T*
+(It is a simplified but realistic version of a production retail AI system.) Tj
+T*
+() Tj
+T*
+ET
+endstream
+endobj
+19 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 18 0 R >>
+endobj
+xref
+0 20
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000162 00000 n 
+0000000232 00000 n 
+0000001874 00000 n 
+0000002000 00000 n 
+0000003950 00000 n 
+0000004076 00000 n 
+0000005922 00000 n 
+0000006048 00000 n 
+0000007717 00000 n 
+0000007845 00000 n 
+0000009290 00000 n 
+0000009418 00000 n 
+0000010736 00000 n 
+0000010864 00000 n 
+0000012464 00000 n 
+0000012592 00000 n 
+0000013891 00000 n 
+trailer
+<< /Size 20 /Root 1 0 R >>
+startxref
+14019
+%%EOF
